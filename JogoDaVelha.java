@@ -9,58 +9,83 @@ public class JogoDaVelha {
     }
 
     public void limpaTabuleiro() {
-        for(int i = 0;i<3;i++) {
-            for (int j=0; j<3; j++) {
-                tabuleiro[i][j]=VAZIO;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                tabuleiro[i][j] = VAZIO;
             }
         }
         jogador = X;
     }
 
     public void poePeca(int i, int j) {
-        if (i<0||i>2||j<0||j>2){
+        if (i < 0 || i > 2 || j < 0 || j > 2) {
             throw new IllegalArgumentException("Posição Inválida");
         }
-        if (tabuleiro[i][j]!=VAZIO) throw new IllegalArgumentException("Posição Ocupada");
-        tabuleiro[i][j]=jogador;
+        if (tabuleiro[i][j] != VAZIO) throw new IllegalArgumentException("Posição Ocupada");
+        tabuleiro[i][j] = jogador;
         jogador = -jogador;
     }
 
-
-    public int vencedor() {
-        int resultado = 2;
-        // Implemente este método que deve retornar o vencedor ou 
-        // zero em caso de empate e 2 se o jogo não acabou.
-
-        return resultado;
+    public boolean eVencedor(int marca) {
+        int sum = 0;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                sum += tabuleiro[i][j];
+            }
+            if (sum == marca * 3) {
+                return true;
+            }
+            sum = 0;
+        }
+        if (diagonalDireita(marca) || diagonalEsquerda(marca)) {
+            return true;
+        }
+        return false;
     }
 
-    
-    public String toString() {
-        /** Implementar o método to String que deve retornar
-         * uma string com o tabuleiro do jogo da velha com as peças
-         * nas posições corretas.
-         */
-        String retorno = "";
-        for (int i=0; i<3;i++){
-            for (int j=0; j<3; j++){
-                if(tabuleiro[i][j]==X) {
-                    retorno += ("X");
-                } else if (tabuleiro[i][j]==O) {
-                    retorno += ("O");
-                } else {
-                    retorno += (" ");
-                }
-                if (j<2){
-                    retorno += ("|");
-                }
-            }
-            //System.out.println();
-            if (i<2){
-                retorno += ("\n-----\n");
-            }
+    private boolean diagonalDireita(int marca) {
+        int diagonal = 0;
+        for (int i = 0; i < 3; i++) {
+            diagonal += tabuleiro[i][i];
+        }
+        if (diagonal == marca * 3) {
+            return true;
+        }
+        return false;
+    }
 
-        }   
+    private boolean diagonalEsquerda(int marca) {
+        int diagonal = 0;
+        for (int i = 0; i < 2; i++) {
+            for (int j = 2; j > 0; j--) {
+                diagonal += tabuleiro[i][j];
+            }
+        }
+        if (diagonal == marca * 3) {
+            return true;
+        }
+        return false;
+    }
+
+    public int vencedor() {
+        if (eVencedor(1)) {
+            return 1;
+        } else if (eVencedor(-1)) {
+            return -1;
+        } else {
+            return 0;
+        }
+    }
+
+    public String toString() {
+        String retorno = "";
+        for (int i = 0; i < 3; i++) {
+            retorno += "| ";
+            for (int j = 0; j < 3; j++) {
+                retorno += (tabuleiro[i][j] == X ? "X" : "O") + " | ";
+            }
+            retorno += "\n";
+        }
         return retorno;
     }
 }
